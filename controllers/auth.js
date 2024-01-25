@@ -16,7 +16,8 @@ const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 const register = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (!user) {
+
+  if (user) {
     throw HttpError(409, "Email in use");
   }
 
@@ -31,7 +32,7 @@ const register = async (req, res) => {
 
   res.status(201).json({
     email: newUser.email,
-    subscription: newUser.subscription,
+    password: newUser.password,
   });
 };
 
@@ -63,21 +64,19 @@ const login = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-  const { email, subscription } = req.user;
-
-  res.status(200).json({ email, subscription });
+  const { email, password } = req.user;
+  res.json({
+    email,
+    password,
+  });
 };
 
 const logout = async (req, res) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: "" });
-
-  res
-    .status(204)
-    .json({
-      message: "Bearer {{token}}",
-    })
-    .message("No Content");
+  res.json({
+    Authorization: "Bearer {{token}}",
+  });
 };
 
 const updateAvatar = async (req, res) => {
