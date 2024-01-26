@@ -101,10 +101,36 @@ const updateAvatar = async (req, res) => {
   res.json({ avatarURL });
 };
 
+async function forgotPassword(req, res) {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw HttpError(401, "Email is wrong");
+  }
+
+  const isCorrectPassword = await bcrypt.compare(password, foundUser.password);
+  if (!isCorrectPassword) {
+    throw HttpError(401, "Email or password is wrong");
+  }
+
+  const hashPassword = await bcrypt.hash(password, 10);
+
+  const newPassword = await User.create({
+    ...req.body,
+    password: hashPassword,
+  });
+
+  res.status(201).json({
+    email: newPassword.email,
+    password: newPassword.password,
+  });
+}
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
   updateAvatar: ctrlWrapper(updateAvatar),
+  forgotPassword: ctrlWrapper(forgotPassword),
 };
