@@ -9,8 +9,9 @@ const waterSchema = new Schema(
       required: [true, "amountWater is required"],
     },
     date: {
-      type: Number,
+      type: String,
       required: [true, "date is required"],
+      default: new Date(),
     },
     day: {
       type: Number,
@@ -22,28 +23,22 @@ const waterSchema = new Schema(
       // required: true,
     },
   },
-  { versionKey: false, timestamps: false }
+  { versionKey: false }
 );
 
-
 waterSchema.post("save", handleMongooseError);
-
 
 // Схема валідації данних води, яку вживав користувач.
 
 const entriesWaterSchemas = Joi.object({
-  amountWater: Joi.number()
-    .min(1)
-    .max(15000)
+  amountWater: Joi.number().min(1).max(15000),
+  date: Joi.string(),
+  day: Joi.number().min(1).max(31),
 });
 
 const updateWaterSchemas = Joi.object({
-  amountWater: Joi.number()
-    .min(1)
-    .max(15000),
-  day: Joi.number()
-    .min(1)
-    .max(31),
+  amountWater: Joi.number().min(1).max(15000),
+  day: Joi.number().min(1).max(31),
 });
 
 const schemas = {
@@ -52,7 +47,6 @@ const schemas = {
 };
 
 const Water = model("water", waterSchema);
-
 
 module.exports = {
   Water,
