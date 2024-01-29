@@ -9,10 +9,23 @@ const addWater = async (req, res) => {
 };
 
 const updateWater = async (req, res) => {
-  const { _id } = req.params;
-  const result = await Water.findByIdAndUpdate(_id, req.body, {
-    new: true,
-  });
+  const { _id } = req.user;
+  const { userId } = req.params;
+  const { amountWater, date, day } = req.body;
+  const result = await Water.findByIdAndUpdate(
+    {
+      _id: userId,
+      owner: _id,
+    },
+    {
+      amountWater: amountWater,
+      date: date,
+      day: day,
+    },
+    {
+      new: true,
+    }
+  );
   if (!result) {
     throw HttpError(404, "Not found");
   }

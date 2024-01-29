@@ -24,10 +24,13 @@ const register = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, 10);
   const avatarURL = gravatar.url(email);
 
+  const userName = email.split("@")[0];
+
   const newUser = await User.create({
     ...req.body,
     password: hashPassword,
     avatarURL,
+    name: userName,
   });
 
   res.status(201).json({

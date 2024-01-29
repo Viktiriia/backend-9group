@@ -13,8 +13,8 @@ router.post(
   ctrl.addWater
 );
 
-router.post(
-  "/update",
+router.put(
+  "/update/:userId",
   authenticate,
   validateBody(schemas.updateWaterSchemas),
   ctrl.updateWater
