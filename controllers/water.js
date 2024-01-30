@@ -33,15 +33,21 @@ const addWater = async (req, res, next) => {
 };
 
 const updateWater = async (req, res) => {
-  const { _id } = req.params;
+  const { entries } = req.user;
+  const { userId } = req.params;
   const { amountWater, day } = req.body;
 
   //  $push для додавання нового запису до масиву entries та $inc для оновлення загальної кількості води
   const result = await Water.findByIdAndUpdate(
-    _id,
     {
-      $push: { entries: { amountWater, day } },
-      $inc: { totalAmountWater: amountWater },
+      entries: userId,
+      id: entries,
+    },
+    {
+      amountWater: amountWater,
+      day: day,
+      // $push: { entries: { amountWater, day } },
+      // $inc: { totalAmountWater: amountWater },
     },
     { new: true }
   );
