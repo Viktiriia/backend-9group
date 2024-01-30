@@ -97,6 +97,7 @@ const entriesWaterSchemas = Joi.object({
 
 const updateWaterSchemas = Joi.object({
   amountWater: Joi.number().min(1).max(15000),
+  date: Joi.string(),
   day: Joi.number().min(1).max(31),
 });
 
