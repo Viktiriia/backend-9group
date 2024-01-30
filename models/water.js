@@ -1,21 +1,29 @@
+
 const Joi = require("joi");
 const { handleMongooseError } = require("../helpers");
 const { Schema, model } = require("mongoose");
 
 const waterSchema = new Schema(
   {
-    amountWater: {
+    entries: [
+      {
+        amountWater: {
+          type: Number,
+          required: true,
+        },
+        date: {
+          type: String,
+          default: new Date(),
+        },
+        day: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    totalAmountWater: {
       type: Number,
-      required: [true, "amountWater is required"],
-    },
-    date: {
-      type: String,
-      required: [true, "date is required"],
-      default: new Date(),
-    },
-    day: {
-      type: Number,
-      required: [true, "day is required"],
+      default: 0,
     },
     owner: {
       type: Schema.Types.ObjectId,
@@ -26,8 +34,6 @@ const waterSchema = new Schema(
 );
 
 waterSchema.post("save", handleMongooseError);
-
-// Схема валідації данних води, яку вживав користувач.
 
 const entriesWaterSchemas = Joi.object({
   amountWater: Joi.number().min(1).max(15000),

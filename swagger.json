@@ -1,124 +1,114 @@
+
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "2.0.2",
-    "title": "Swagger test",
-    "description": "Showing off swagger-ui-express",
+    "version": "1.0.0",
+    "title": "Water API",
+    "description": "API for user authentication",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "consumes": ["application/json", "multipart/form-data"],
-  "produces": ["application/json"],
-  "servers": [{ "url": "http://localhost:3000" }],
+  "servers": [
+    {
+      "url": "http://localhost:3001",
+      "description": "Local development server"
+    }
+  ],
   "tags": [
     {
       "name": "Auth",
-      "description": "Authorization endpoints"
+      "description": "Authentication endpoints"
     }
   ],
   "paths": {
-    "/users/register": {
+    "/auth/register": {
       "post": {
         "tags": ["Auth"],
         "summary": "User registration",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Registration's object",
+          "description": "User registration data",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
+                "$ref": "#/components/schemas/RegisterRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Successful operation",
+            "description": "User successfully registered",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/RegisterResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)",
+            "description": "Bad request",
             "content": {}
           },
           "409": {
-            "description": "Provided email already exists",
+            "description": "Email already in use",
             "content": {}
           }
         }
       }
     },
-
-    "/users/login": {
+    "/auth/login": {
       "post": {
         "tags": ["Auth"],
         "summary": "Login user",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Registration's object",
+          "description": "User login data",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "User is logged in.",
+            "description": "User logged in successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             }
           },
-          "400": {
-            "description": "Login error.",
+          "401": {
+            "description": "Email or password is wrong",
             "content": {}
           }
         }
       }
     },
-
-    "/users/current": {
+    "/auth/current": {
       "get": {
         "tags": ["Auth"],
-        "summary": "User registration",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
+        "summary": "Get current user information",
+        "security": [
+          {
+            "Bearer": []
           }
-        },
+        ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Successfully retrieved current user information",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/UserInfoResponse"
                 }
               }
             }
@@ -130,35 +120,26 @@
         }
       }
     },
-
-    "/users/logout": {
+    "/auth/logout": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Logout",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
+        "summary": "Logout user",
+        "security": [
+          {
+            "Bearer": []
           }
-        },
+        ],
         "responses": {
           "200": {
-            "description": "The user is logged out",
+            "description": "User logged out successfully",
             "content": {}
           },
           "401": {
-            "description": "Missing authorization token.",
+            "description": "Missing authorization token",
             "content": {}
           },
           "500": {
-            "description": "Server error.",
+            "description": "Server error",
             "content": {}
           }
         }
@@ -167,43 +148,79 @@
   },
   "components": {
     "schemas": {
-      "RegistrationRequest": {
+      "RegisterRequest": {
         "type": "object",
-        "required": ["email", "password"],
         "properties": {
           "email": {
             "type": "string",
-            "description": "User's email",
             "format": "email"
           },
           "password": {
             "type": "string",
-            "description": "User's password",
-            "example": "qwerty123"
+            "minLength": 8,
+            "maxLength": 64
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string"
           }
         }
       },
-      "RegistrationResponse": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "description": "User's email",
-              "format": "email"
-            },
-            "userId": {
-              "type": "integer",
-              "description": "User's id",
-              "example": "32143232436545474"
-            }
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 64
           }
         },
-        "example": [
-          { "email": "test1@gmail.com", "userId": "d5fgF45tdf1" },
-          { "email": "test2@gmail.com", "userId": "Dxd5gFS3ft2" }
-        ]
+        "required": ["email", "password"]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "subscription": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "UserInfoResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
       }
     },
     "securitySchemes": {
