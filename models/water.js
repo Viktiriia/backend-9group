@@ -1,4 +1,3 @@
-
 const Joi = require("joi");
 const { handleMongooseError } = require("../helpers");
 const { Schema, model } = require("mongoose");
@@ -11,9 +10,13 @@ const waterSchema = new Schema(
           type: Number,
           required: true,
         },
-        date: {
-          type: String,
-          default: new Date(),
+        // date: {
+        //   type: String,
+        //   default: new Date(),
+        // },
+        time: {
+          type: Date,
+          default: Date.now,
         },
         day: {
           type: Number,
@@ -37,14 +40,12 @@ waterSchema.post("save", handleMongooseError);
 
 const entriesWaterSchemas = Joi.object({
   amountWater: Joi.number().min(1).max(15000),
-  date: Joi.string(),
-  day: Joi.number().min(1).max(31),
+  // day: Joi.number().min(1).max(31),
 });
 
 const updateWaterSchemas = Joi.object({
   amountWater: Joi.number().min(1).max(15000),
-  date: Joi.string(),
-  day: Joi.number().min(1).max(31),
+  // day: Joi.number().min(1).max(31),
 });
 
 const schemas = {
