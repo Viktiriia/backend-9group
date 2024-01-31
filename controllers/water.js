@@ -2,15 +2,24 @@ const { ctrlWrapper } = require("../helpers");
 const { HttpError } = require("../helpers");
 const { Water } = require("../models/water");
 
+const findExistingEntryAndCalculateOldAmount = async (waterId) => {
+  const existingEntry = await Water.findOne({ 'entries._id': waterId });
+
+  if (!existingEntry) {
+    throw HttpError(404, "Not found");
+  }
+
+  const oldAmountWater = existingEntry.entries.find(entry => entry._id.toString() === waterId).amountWater;
+  return oldAmountWater;
+};
+
 const addWater = async (req, res, next) => {
   const { _id: owner } = req.user;
   const { amountWater, day } = req.body;
 
-  // Знайти документ, якщо він існує для даного користувача
   const existingWaterData = await Water.findOne({ owner });
 
   if (existingWaterData) {
-    // Якщо користувач вже має дані, оновлюємо їх, використовуючи $push та $inc
     const updatedResult = await Water.findOneAndUpdate(
       { owner },
       {
@@ -22,7 +31,6 @@ const addWater = async (req, res, next) => {
 
     res.status(201).json(updatedResult);
   } else {
-    // Якщо користувач ще не має даних створюється новий документ
     const result = await Water.create({
       entries: [{ amountWater, day }],
       totalAmountWater: amountWater,
@@ -34,49 +42,41 @@ const addWater = async (req, res, next) => {
 
 const updateWater = async (req, res) => {
   const { waterId } = req.params;
-  const { amountWater, day } = req.body;
+  const { amountWater } = req.body;
 
-  //  $push для додавання нового запису до масиву entries та $inc для оновлення загальної кількості води
+  const oldAmountWater = await findExistingEntryAndCalculateOldAmount(waterId);
+
   const result = await Water.findOneAndUpdate(
-    {'entries._id': waterId},
+    { 'entries._id': waterId },
     {
-      $push: { entries: { amountWater, day } },
-      $inc: { totalAmountWater: amountWater },
+      $set: { 'entries.$[elem].amountWater': amountWater },
+      $inc: { totalAmountWater: amountWater - oldAmountWater },
     },
-    { new: true }
+    {
+      arrayFilters: [{ 'elem._id': waterId }],
+      new: true
+    }
   );
 
-  if (!result) {
-    throw HttpError(404, "Not found");
-  }
   res.json(result);
 };
 
 const deleteWater = async (req, res) => {
-  const { _id } = req.user;
   const { waterId } = req.params;
-  const { amountWater } = req.body;
 
-    const result = await Water.findOneAndDelete({
-      owner: _id,
-      "entries._id": waterId
-    });
+  const oldAmountWater = await findExistingEntryAndCalculateOldAmount(waterId);
 
-    if (!result) {
-      throw HttpError(404, "Not found");
-    }
+  const result = await Water.findOneAndUpdate(
+    { 'entries._id': waterId },
+    {
+      $pull: { entries: { _id: waterId } },
+      $inc: { totalAmountWater: -oldAmountWater },
+    },
+    { new: true }
+  );
 
-    // Видалення елементу з масиву entries
-    result.entries.pull({ _id: waterId });
-
-    // Оновлення totalAmountWater
-    result.totalAmountWater -= amountWater;
-
-    // Збереження оновленого документа
-    await result.save();
-
-    res.status(200).json({ message: "Entry deleted", entry: result });
-  }
+  res.json(result);
+};
 
 module.exports = {
   addWater: ctrlWrapper(addWater),

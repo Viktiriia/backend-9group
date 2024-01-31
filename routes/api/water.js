@@ -22,14 +22,8 @@ router.put(
   ctrl.updateWater
 );
 
-<<<<<<< Updated upstream
-
-
 router.delete("/:waterId", authenticate, isValidId, ctrl.deleteWater);
-=======
-// - Видалення запису по спожитій воді
-router.delete("/:id", authenticate, isValidId, ctrl.deleteWater);
->>>>>>> Stashed changes
+
 
 // router.get("/amountdaily", authenticate, ctrl.getAmountDaily);
 
