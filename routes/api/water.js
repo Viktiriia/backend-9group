@@ -6,6 +6,7 @@ const { authenticate, isValidId } = require("../../middlewares");
 
 const router = express.Router();
 
+// - Додавання запису по спожитій воді
 router.post(
   "/add",
   authenticate,
@@ -13,16 +14,22 @@ router.post(
   ctrl.addWater
 );
 
+// - Редагування запису по спожитій воді
 router.put(
-  "/update/:userId",
+  "/update/:waterId",
   authenticate,
   validateBody(schemas.updateWaterSchemas),
   ctrl.updateWater
 );
 
+<<<<<<< Updated upstream
 
 
+router.delete("/:waterId", authenticate, isValidId, ctrl.deleteWater);
+=======
+// - Видалення запису по спожитій воді
 router.delete("/:id", authenticate, isValidId, ctrl.deleteWater);
+>>>>>>> Stashed changes
 
 // router.get("/amountdaily", authenticate, ctrl.getAmountDaily);
 

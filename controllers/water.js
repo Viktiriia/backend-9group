@@ -33,21 +33,15 @@ const addWater = async (req, res, next) => {
 };
 
 const updateWater = async (req, res) => {
-  const { entries } = req.user;
-  const { userId } = req.params;
+  const { waterId } = req.params;
   const { amountWater, day } = req.body;
 
   //  $push для додавання нового запису до масиву entries та $inc для оновлення загальної кількості води
-  const result = await Water.findByIdAndUpdate(
+  const result = await Water.findOneAndUpdate(
+    {'entries._id': waterId},
     {
-      entries: userId,
-      id: entries,
-    },
-    {
-      amountWater: amountWater,
-      day: day,
-      // $push: { entries: { amountWater, day } },
-      // $inc: { totalAmountWater: amountWater },
+      $push: { entries: { amountWater, day } },
+      $inc: { totalAmountWater: amountWater },
     },
     { new: true }
   );
@@ -58,19 +52,37 @@ const updateWater = async (req, res) => {
   res.json(result);
 };
 
+
+
+
 const deleteWater = async (req, res) => {
   const { _id } = req.user;
-  const { entryId } = req.params;
+  const { waterId } = req.params;
+  const { amountWater } = req.body;
 
-  const entryToDelete = await Water.findOne({
-    owner: _id,
-    "entries._id": entryId,
-  });
+    const result = await Water.findOneAndDelete({
+      owner: _id,
+      "entries._id": waterId
+    });
 
-  if (!entryToDelete) {
-    throw HttpError(404, "Not found");
+    if (!result) {
+      throw HttpError(404, "Not found");
+    }
+
+    // Видалення елементу з масиву entries
+    result.entries.pull({ _id: waterId });
+
+    // Оновлення totalAmountWater
+    result.totalAmountWater -= amountWater;
+
+    // Збереження оновленого документа
+    await result.save();
+
+    res.status(200).json({ message: "Entry deleted", entry: result });
   }
 
+<<<<<<< Updated upstream
+=======
   await Water.findOneAndUpdate(
     { owner: _id },
     {
@@ -83,6 +95,8 @@ const deleteWater = async (req, res) => {
   res.status(200).json({ message: "Entry deleted" });
 };
 
+
+>>>>>>> Stashed changes
 module.exports = {
   addWater: ctrlWrapper(addWater),
   updateWater: ctrlWrapper(updateWater),
