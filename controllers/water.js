@@ -52,6 +52,9 @@ const updateWater = async (req, res) => {
   res.json(result);
 };
 
+
+
+
 const deleteWater = async (req, res) => {
   const { _id } = req.user;
   const { waterId } = req.params;
@@ -78,6 +81,22 @@ const deleteWater = async (req, res) => {
     res.status(200).json({ message: "Entry deleted", entry: result });
   }
 
+<<<<<<< Updated upstream
+=======
+  await Water.findOneAndUpdate(
+    { owner: _id },
+    {
+      $pull: { entries: { _id: entryId } },
+      $inc: { totalAmountWater: -entryToDelete.amountWater },
+    },
+    { new: true }
+  );
+
+  res.status(200).json({ message: "Entry deleted" });
+};
+
+
+>>>>>>> Stashed changes
 module.exports = {
   addWater: ctrlWrapper(addWater),
   updateWater: ctrlWrapper(updateWater),
