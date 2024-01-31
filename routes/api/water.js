@@ -14,7 +14,7 @@ router.post(
 );
 
 router.put(
-  "/update/:userId",
+  "/update/:waterId",
   authenticate,
   validateBody(schemas.updateWaterSchemas),
   ctrl.updateWater
@@ -22,7 +22,7 @@ router.put(
 
 
 
-router.delete("/:id", authenticate, isValidId, ctrl.deleteWater);
+router.delete("/:waterId", authenticate, isValidId, ctrl.deleteWater);
 
 // router.get("/amountdaily", authenticate, ctrl.getAmountDaily);
 

@@ -33,12 +33,12 @@ const addWater = async (req, res, next) => {
 };
 
 const updateWater = async (req, res) => {
-  const { _id } = req.params;
+  const { waterId } = req.params;
   const { amountWater, day } = req.body;
 
   //  $push для додавання нового запису до масиву entries та $inc для оновлення загальної кількості води
-  const result = await Water.findByIdAndUpdate(
-    _id,
+  const result = await Water.findOneAndUpdate(
+    {'entries._id': waterId},
     {
       $push: { entries: { amountWater, day } },
       $inc: { totalAmountWater: amountWater },
@@ -54,28 +54,29 @@ const updateWater = async (req, res) => {
 
 const deleteWater = async (req, res) => {
   const { _id } = req.user;
-  const { entryId } = req.params;
+  const { waterId } = req.params;
+  const { amountWater } = req.body;
 
-  const entryToDelete = await Water.findOne({
-    owner: _id,
-    "entries._id": entryId,
-  });
+    const result = await Water.findOneAndDelete({
+      owner: _id,
+      "entries._id": waterId
+    });
 
-  if (!entryToDelete) {
-    throw HttpError(404, "Not found");
+    if (!result) {
+      throw HttpError(404, "Not found");
+    }
+
+    // Видалення елементу з масиву entries
+    result.entries.pull({ _id: waterId });
+
+    // Оновлення totalAmountWater
+    result.totalAmountWater -= amountWater;
+
+    // Збереження оновленого документа
+    await result.save();
+
+    res.status(200).json({ message: "Entry deleted", entry: result });
   }
-
-  await Water.findOneAndUpdate(
-    { owner: _id },
-    {
-      $pull: { entries: { _id: entryId } },
-      $inc: { totalAmountWater: -entryToDelete.amountWater },
-    },
-    { new: true }
-  );
-
-  res.status(200).json({ message: "Entry deleted" });
-};
 
 module.exports = {
   addWater: ctrlWrapper(addWater),
