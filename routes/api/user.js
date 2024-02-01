@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const ctrl = require("../../controllers/user");
 
-const { schemas } = require("../../models/contact");
+const { schemas } = require("../../models/user");
 
 const {
   isValidId,
@@ -20,15 +20,15 @@ router.patch(
 );
 
 // Створити ендпоінт для отримання інформації про користувача
-router.get("/:userId", authenticate, isValidId, ctrl.getOne);
+router.get("/:_id", authenticate, isValidId, ctrl.getInfoUser);
 
 // Створити ендпоінт для оновлення інформації про користувача або одного з полів контактної інформації
 router.put(
-  "/:userId",
+  "/:_id",
   authenticate,
   isValidId,
   validateBody(schemas.addSchema),
-  ctrl.updateById
+  ctrl.getUserUpdateById
 );
 
 module.exports = router;

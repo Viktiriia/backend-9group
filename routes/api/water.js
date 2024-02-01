@@ -24,6 +24,6 @@ router.put(
 
 router.delete("/:waterId", authenticate, isValidId, ctrl.deleteWater);
 
-// router.get("/amountdaily", authenticate, ctrl.getAmountDaily);
+router.get("/amountdaily", authenticate, ctrl.waterRate);
 
 module.exports = router;
