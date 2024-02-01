@@ -49,8 +49,25 @@ const updateById = async (req, res) => {
   res.json(result);
 };
 
+const dailyNorma = async (req, res) => {
+  const { _id } = req.user;
+  const { dailyNorma } = req.body;
+
+  if (!dailyNorma > 15) {
+    throw HttpError(400, "Daily water standard exceeded ");
+  }
+
+  const result = await User.findByIdAndUpdate(_id, req.body, { new: true });
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
+
+  res.json({ dailyNorma });
+};
+
 module.exports = {
   getOne: ctrlWrapper(getOne),
   updateById: ctrlWrapper(updateById),
   updateAvatar: ctrlWrapper(updateAvatar),
+  dailyNorma: ctrlWrapper(dailyNorma),
 };
