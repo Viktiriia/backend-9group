@@ -20,6 +20,7 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
+      select: false,
       required: [true, "Set password for user"],
     },
     gender: {
@@ -27,13 +28,16 @@ const userSchema = new Schema(
       enum: ["male", "female"],
       default: "male",
     },
-    water: {
-      type: Number,
-    },
     token: {
       type: String,
       default: "",
     },
+    // accessToken: {
+    //   type: String,
+    // },
+    // refreshToken: {
+    //   type: String,
+    // },
     avatarURL: {
       type: String,
       required: true,
@@ -41,6 +45,7 @@ const userSchema = new Schema(
     verify: {
       type: Boolean,
       default: false,
+      select: false,
     },
     verificationToken: {
       type: String,
@@ -62,9 +67,21 @@ const loginSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
 });
 
+const refreshSchema = Joi.object({
+  refreshToken: Joi.string().required(),
+});
+
+const addSchema = Joi.object({
+  name: Joi.string(),
+  gender: Joi.string(),
+  avatarURL: Joi.string(),
+});
+
 const schemas = {
   registerSchema,
   loginSchema,
+  refreshSchema,
+  addSchema,
 };
 
 const User = model("user", userSchema);

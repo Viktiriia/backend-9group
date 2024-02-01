@@ -1,7 +1,4 @@
-const fs = require("fs/promises");
 const { User } = require("../models/user");
-const { Contact } = require("../models/contact");
-const path = require("path");
 
 const { ctrlWrapper } = require("../helpers");
 const { HttpError } = require("../helpers");
@@ -21,53 +18,38 @@ const updateAvatar = async (req, res) => {
   res.json({ avatarURL: user.avatarURL });
 };
 
-const getOne = async (req, res) => {
-  const { userId } = req.params;
-  const result = await Contact.findById(userId);
+const getInfoUser = async (req, res) => {
+  const { _id } = req.params;
+  const result = await User.findById(_id);
   if (!result) {
     throw HttpError(404, "Not found");
   }
   res.json(result);
 };
 
-const updateById = async (req, res) => {
+const getUserUpdateById = async (req, res) => {
   const { _id } = req.user;
-  const { userId } = req.params;
-  const result = await Contact.findByIdAndUpdate(
-    {
-      _id: userId,
-      owner: _id,
-    },
-    req.body,
-    {
-      new: true,
-    }
-  ).populate("owner", "_id email subscription");
+  const { name, avatarURL, gender, water } = req.body;
+
+  const result = await User.findByIdAndUpdate(
+    _id,
+    { name, avatarURL, gender, water },
+    { new: true }
+  ).populate("_id email password");
+
   if (!result) {
-    throw HttpError(404, "Not found");
-  }
-  res.json(result);
-};
-
-const dailyNorma = async (req, res) => {
-  const { _id } = req.user;
-  const { dailyNorma } = req.body;
-
-  if (!dailyNorma > 15) {
-    throw HttpError(400, "Daily water standard exceeded ");
+    throw new HttpError(404, "Not found");
   }
 
-  const result = await User.findByIdAndUpdate(_id, req.body, { new: true });
   if (!result) {
     throw HttpError(404, "Not found");
   }
 
-  res.json({ dailyNorma });
+  res.json({ name, avatarURL, gender, water });
 };
 
 module.exports = {
-  getOne: ctrlWrapper(getOne),
-  updateById: ctrlWrapper(updateById),
+  getInfoUser: ctrlWrapper(getInfoUser),
+  getUserUpdateById: ctrlWrapper(getUserUpdateById),
   updateAvatar: ctrlWrapper(updateAvatar),
-  dailyNorma: ctrlWrapper(dailyNorma),
 };
