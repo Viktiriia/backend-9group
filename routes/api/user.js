@@ -4,19 +4,23 @@ const ctrl = require("../../controllers/user");
 
 const { schemas } = require("../../models/contact");
 
-const { isValidId, validateBody, authenticate, upload } = require("../../middlewares");
+const {
+  isValidId,
+  validateBody,
+  authenticate,
+  upload,
+} = require("../../middlewares");
 
 // Створити ендпоінт для додавання/зміни зображення, аватару користувача
 router.patch(
-    "/avatars",
-    authenticate,
-    upload.single("avatar"),
-    ctrl.updateAvatar
-  );
+  "/avatars",
+  authenticate,
+  upload.single("avatar"),
+  ctrl.updateAvatar
+);
 
 // Створити ендпоінт для отримання інформації про користувача
 router.get("/:userId", authenticate, isValidId, ctrl.getOne);
-
 
 // Створити ендпоінт для оновлення інформації про користувача або одного з полів контактної інформації
 router.put(
@@ -26,7 +30,5 @@ router.put(
   validateBody(schemas.addSchema),
   ctrl.updateById
 );
-
-
 
 module.exports = router;

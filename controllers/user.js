@@ -1,5 +1,4 @@
 const fs = require("fs/promises");
-const Jimp = require("jimp");
 const { User } = require("../models/user");
 const { Contact } = require("../models/contact");
 const path = require("path");
@@ -7,27 +6,19 @@ const path = require("path");
 const { ctrlWrapper } = require("../helpers");
 const { HttpError } = require("../helpers");
 
-const avatarsDir = path.join(__dirname, "../", "public", "avatars");
-
 const updateAvatar = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded" });
   }
   const { _id } = req.user;
-  const { path: tempUpload, originalname } = req.file;
 
-  const filename = `${_id}_${originalname}`;
-  const resultUpload = path.join(avatarsDir, filename);
+  const avatarURL = req.file.path;
+  const user = await User.findByIdAndUpdate(_id);
 
-  const modAvatar = await Jimp.read(path.join(tempUpload));
-  await modAvatar.resize(250, 250);
-  await modAvatar.writeAsync(path.join(tempUpload));
+  user.avatarURL = avatarURL;
+  user.save();
 
-  await fs.rename(tempUpload, resultUpload);
-  const avatarURL = path.join("avatars", filename);
-  await User.findByIdAndUpdate(_id, { avatarURL });
-
-  res.json({ avatarURL });
+  res.json({ avatarURL: user.avatarURL });
 };
 
 const getOne = async (req, res) => {
@@ -58,8 +49,25 @@ const updateById = async (req, res) => {
   res.json(result);
 };
 
+const dailyNorma = async (req, res) => {
+  const { _id } = req.user;
+  const { dailyNorma } = req.body;
+
+  if (!dailyNorma > 15) {
+    throw HttpError(400, "Daily water standard exceeded ");
+  }
+
+  const result = await User.findByIdAndUpdate(_id, req.body, { new: true });
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
+
+  res.json({ dailyNorma });
+};
+
 module.exports = {
   getOne: ctrlWrapper(getOne),
   updateById: ctrlWrapper(updateById),
   updateAvatar: ctrlWrapper(updateAvatar),
+  dailyNorma: ctrlWrapper(dailyNorma),
 };

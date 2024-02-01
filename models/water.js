@@ -10,10 +10,6 @@ const waterSchema = new Schema(
           type: Number,
           required: true,
         },
-        // date: {
-        //   type: String,
-        //   default: new Date(),
-        // },
         time: {
           type: Date,
           default: Date.now,
@@ -27,6 +23,10 @@ const waterSchema = new Schema(
     totalAmountWater: {
       type: Number,
       default: 0,
+    },
+    date: {
+      type: String,
+      default: new Date(),
     },
     owner: {
       type: Schema.Types.ObjectId,

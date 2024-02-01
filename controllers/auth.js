@@ -7,11 +7,8 @@ const { TOKEN_KEY } = process.env;
 
 const { ctrlWrapper } = require("../helpers");
 const { HttpError } = require("../helpers");
-const gravatar = require("gravatar");
 const path = require("path");
-const Jimp = require("jimp");
-
-const avatarsDir = path.join(__dirname, "../", "public", "avatars");
+const gravatar = require("gravatar");
 
 const register = async (req, res) => {
   const { email, password } = req.body;
@@ -67,10 +64,11 @@ const login = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-  const { email, password } = req.user;
+  const { email, gender, name, } = req.user;
   res.json({
     email,
-    password,
+    gender,
+    name,
   });
 };
 
@@ -82,28 +80,7 @@ const logout = async (req, res) => {
   });
 };
 
-const updateAvatar = async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-  }
-  const { _id } = req.user;
-  const { path: tempUpload, originalname } = req.file;
-
-  const filename = `${_id}_${originalname}`;
-  const resultUpload = path.join(avatarsDir, filename);
-
-  const modAvatar = await Jimp.read(path.join(tempUpload));
-  await modAvatar.resize(250, 250);
-  await modAvatar.writeAsync(path.join(tempUpload));
-
-  await fs.rename(tempUpload, resultUpload);
-  const avatarURL = path.join("avatars", filename);
-  await User.findByIdAndUpdate(_id, { avatarURL });
-
-  res.json({ avatarURL });
-};
-
-async function forgotPassword(req, res) {
+const forgotPassword = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) {
@@ -126,13 +103,97 @@ async function forgotPassword(req, res) {
     email: newPassword.email,
     password: newPassword.password,
   });
-}
+};
 
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
-  updateAvatar: ctrlWrapper(updateAvatar),
   forgotPassword: ctrlWrapper(forgotPassword),
 };
+
+
+
+// const { ctrlWrapper } = require("../helpers");
+// const { HttpError } = require("../helpers");
+// const { Contact } = require("../models/contact");
+
+// const getOne = async (req, res) => {
+//   const { _id } = req.user;
+//   const { contactId } = req.params;
+//   const result = await Contact.findById({
+//     _id: contactId,
+//     owner: _id,
+//   }).populate("owner", "email subscription");
+//   if (!result) {
+//     throw HttpError(404, "Not found");
+//   }
+//   res.status(200).json(result);
+// };
+
+// const add = async (req, res) => {
+//   const { _id: owner } = req.user;
+//   const result = await Contact.create({ ...req.body, owner });
+//   res.status(201).json({ result });
+// };
+
+// const updateById = async (req, res) => {
+//   const { _id } = req.user;
+//   const { contactId } = req.params;
+//   const result = await Contact.findByIdAndUpdate(
+//     {
+//       _id: contactId,
+//       owner: _id,
+//     },
+//     req.body,
+//     {
+//       new: true,
+//     }
+//   ).populate("owner", "_id email subscription");
+//   if (!result) {
+//     throw HttpError(404, "Not found");
+//   }
+//   res.json(result);
+// };
+
+// const updateStatusContact = async (req, res) => {
+//   const { _id } = req.user;
+//   const { contactId } = req.params;
+//   const result = await Contact.findByIdAndUpdate(
+//     {
+//       _id: contactId,
+//       owner: _id,
+//     },
+//     req.body,
+//     {
+//       new: true,
+//     }
+//   ).populate("owner", "_id email subscription");
+//   if (!result) {
+//     throw HttpError(400, "missing field favorite");
+//   }
+//   res.json(result);
+// };
+
+// const removeById = async (req, res) => {
+//   const { _id } = req.user;
+//   const { contactId } = req.params;
+//   const result = await Contact.findByIdAndDelete({
+//     _id: contactId,
+//     owner: _id,
+//   }).populate("owner", "_id email subscription");
+//   if (!result) {
+//     throw HttpError(404, "Not found");
+//   }
+//   res.status(200).json({ message: "contact deleted" });
+// };
+
+// module.exports = {
+//   getAll: ctrlWrapper(getAll),
+//   getOne: ctrlWrapper(getOne),
+//   add: ctrlWrapper(add),
+//   updateById: ctrlWrapper(updateById),
+//   updateStatusContact: ctrlWrapper(updateStatusContact),
+//   removeById: ctrlWrapper(removeById),
+// };
