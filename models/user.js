@@ -1,15 +1,16 @@
 const Joi = require("joi");
 const { Schema, model } = require("mongoose");
 const { handleMongooseError } = require("../helpers");
-const { nanoid } = require("nanoid");
 
 const emailRegexp = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
 
 const userSchema = new Schema(
   {
+    dailyNorma: {
+      type: Number,
+    },
     name: {
       type: String,
-      default: `Change Name ${nanoid()}`,
     },
     email: {
       type: String,
@@ -36,6 +37,14 @@ const userSchema = new Schema(
     avatarURL: {
       type: String,
       required: true,
+    },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: [true, "Verify token is required"],
     },
   },
   { versionKey: false, timestamps: true }
