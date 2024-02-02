@@ -31,6 +31,11 @@ router.patch(
   ctrl.getUserUpdateById
 );
 
-router.get("/water-rate", authenticate, validateBody(schemas.waterRateSchema), ctrl.waterRate);
+router.patch(
+  "/water-rate",
+  authenticate,
+  validateBody(schemas.waterRateSchema),
+  ctrl.waterRate
+);
 
 module.exports = router;

@@ -10,7 +10,7 @@ const updateAvatar = async (req, res) => {
   const { _id } = req.user;
 
   const avatarURL = req.file.path;
-  const user = await User.findByIdAndUpdate( _id);
+  const user = await User.findByIdAndUpdate(_id);
 
   user.avatarURL = avatarURL;
   user.save();
@@ -20,17 +20,26 @@ const updateAvatar = async (req, res) => {
 
 const getInfoUser = async (req, res) => {
   const { userId } = req.params;
-  console.log(userId)
   const result = await User.findById(userId);
+
   if (!result) {
     throw HttpError(404, "Not found");
   }
-  res.json(result);
+
+  const responseData = {
+    name: result.name,
+    email: result.email,
+    avatarURL: result.avatarURL,
+    gender: result.gender,
+    dailyNorma: result.dailyNorma,
+  };
+
+  res.json(responseData);
 };
 
 const getUserUpdateById = async (req, res) => {
   const { _id } = req.user;
-  const { name, avatarURL, gender, water } = req.body;
+  const { name, avatarURL, gender, dailyNorma } = req.body;
 
   const result = await User.findByIdAndUpdate(
     _id,
@@ -46,28 +55,25 @@ const getUserUpdateById = async (req, res) => {
     throw HttpError(404, "Not found");
   }
 
-  res.json({ name, avatarURL, gender, water });
+  res.json({ name, avatarURL, gender, water, dailyNorma });
 };
 
+const waterRate = async (req, res) => {
+  const { _id } = req.user;
+  const { dailyNorma } = req.body;
 
+  if (dailyNorma > 15) {
+    throw HttpError(400, "The daily rate can be a maximum of 15 l");
+  }
 
-  const waterRate = async (req, res) => {
+  const result = await User.findByIdAndUpdate(_id, req.body, { new: true });
 
-      const { userId } = req.user;
-      const { dailyNorma } = req.body;
-  
-      if (dailyNorma > 15) {
-        throw HttpError(400, "The daily rate can be a maximum of 15 l");
-      }
-  
-      const result = await User.findByIdAndUpdate(userId, { dailyNorma }, { new: true });
-  
-      if (!result) {
-        throw HttpError(404, "User not found");
-      }
-  
-        res.json({ dailyNorma: result.dailyNorma });
-      }
+  if (!result) {
+    throw HttpError(404, "User not found");
+  }
+
+  res.json({ dailyNorma });
+};
 
 module.exports = {
   getInfoUser: ctrlWrapper(getInfoUser),

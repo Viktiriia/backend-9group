@@ -2,7 +2,6 @@ const { ctrlWrapper } = require("../helpers");
 const { HttpError } = require("../helpers");
 const { Water } = require("../models/water");
 
-
 const findExistingEntryAndCalculateOldAmount = async (waterId) => {
   const existingEntry = await Water.findOne({ "entries._id": waterId });
 
@@ -80,22 +79,6 @@ const deleteWater = async (req, res) => {
 
   res.json(result);
 };
-
-// const waterRate = async (req, res) => {
-//   const { _id } = req.user;
-//   const { dailyNorma } = req.body;
-
-//   if (!dailyNorma > 15) {
-//     throw HttpError(400, "Daily water standard exceeded ");
-//   }
-
-//   const result = await User.findByIdAndUpdate(_id, req.body, { new: true });
-//   if (!result) {
-//     throw HttpError(404, "Not found");
-//   }
-
-//   res.json({ dailyNorma });
-// };
 
 module.exports = {
   addWater: ctrlWrapper(addWater),
