@@ -20,15 +20,17 @@ router.patch(
 );
 
 // Створити ендпоінт для отримання інформації про користувача
-router.get("/:_id", authenticate, isValidId, ctrl.getInfoUser);
+router.get("/:userId", authenticate, isValidId, ctrl.getInfoUser);
 
 // Створити ендпоінт для оновлення інформації про користувача або одного з полів контактної інформації
-router.put(
-  "/:_id",
+router.patch(
+  "/update/:userId",
   authenticate,
   isValidId,
   validateBody(schemas.addSchema),
   ctrl.getUserUpdateById
 );
+
+router.get("/water-rate", authenticate, validateBody(schemas.waterRateSchema), ctrl.waterRate);
 
 module.exports = router;
