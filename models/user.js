@@ -8,6 +8,7 @@ const userSchema = new Schema(
   {
     dailyNorma: {
       type: Number,
+      default: 2,
     },
     name: {
       type: String,
@@ -20,7 +21,6 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      // select: false,
       required: [true, "Set password for user"],
     },
     gender: {
@@ -51,7 +51,7 @@ const userSchema = new Schema(
       required: [true, "Verify token is required"],
     },
   },
-  { versionKey: false}
+  { versionKey: false }
 );
 
 userSchema.post("save", handleMongooseError);
@@ -66,9 +66,9 @@ const loginSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
 });
 
-const refreshSchema = Joi.object({
-  refreshToken: Joi.string().required(),
-});
+// const refreshSchema = Joi.object({
+//   refreshToken: Joi.string().required(),
+// });
 
 const addSchema = Joi.object({
   name: Joi.string(),
@@ -86,9 +86,9 @@ const waterRateSchema = Joi.object({
 const schemas = {
   registerSchema,
   loginSchema,
-  refreshSchema,
+  // refreshSchema,
   addSchema,
-  waterRateSchema
+  waterRateSchema,
 };
 
 const User = model("user", userSchema);
