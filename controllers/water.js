@@ -2,6 +2,7 @@ const { ctrlWrapper } = require("../helpers");
 const { HttpError } = require("../helpers");
 const { Water } = require("../models/water");
 
+
 const findExistingEntryAndCalculateOldAmount = async (waterId) => {
   const existingEntry = await Water.findOne({ "entries._id": waterId });
 
@@ -80,8 +81,34 @@ const deleteWater = async (req, res) => {
   res.json(result);
 };
 
+const getToDay = async (req, res) => {
+
+    const { _id: owner } = req.user;
+
+    const date = new Date();
+
+    const waterData = await Water.findOne({
+      date: {
+        $gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+      },
+      owner,
+    });
+
+    if (!waterData) {
+      throw HttpError(404);
+    }
+
+    const dailyWater = {
+      amountWater: waterData.entries.length,
+      percentage: Math.floor((waterData.totalVolume / (waterData.dailyNorma * 1000)) * 100),
+      entries: waterData.entries,
+    };
+
+    res.json(dailyWater);
+  }
 module.exports = {
   addWater: ctrlWrapper(addWater),
   updateWater: ctrlWrapper(updateWater),
   deleteWater: ctrlWrapper(deleteWater),
+  getToDay: ctrlWrapper(getToDay),
 };

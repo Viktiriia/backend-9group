@@ -43,7 +43,7 @@ const getUserUpdateById = async (req, res) => {
 
   const result = await User.findByIdAndUpdate(
     _id,
-    { name, avatarURL, gender, water },
+    { name, avatarURL, gender, },
     { new: true }
   ).populate("_id email password");
 
@@ -55,7 +55,7 @@ const getUserUpdateById = async (req, res) => {
     throw HttpError(404, "Not found");
   }
 
-  res.json({ name, avatarURL, gender, water, dailyNorma });
+  res.json({ name, avatarURL, gender, dailyNorma });
 };
 
 const waterRate = async (req, res) => {

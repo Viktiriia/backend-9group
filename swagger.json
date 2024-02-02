@@ -297,6 +297,52 @@
       }
     },
 
+    "/user/water-rate": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Daily norma update",
+        "parameters": [
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update water rate",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterRateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaterRateResponse"
+                }
+              }
+            }
+          },
+
+          "400": {
+            "description": "dailyNorma must be less than or equal to 15"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+
 
     "/api/water/add": {
       "post": {
@@ -617,6 +663,28 @@
             "type": "string",
             "description": "URL or path to user's avatar",
             "example": "https://res.cloudinary.com/dq9jwcrpl/image/upload/v1706882781/avatars/65bce01778f0a6969a9bf3fd.png"
+          }
+        }
+      },
+
+      "WaterRateRequest": {
+        "type": "object",
+        "required": ["dailyNorma"],
+        "properties": {
+          "dailyNorma": {
+            "type": "number",
+            "description": "User daily norma",
+            "example": 2.4
+          }
+        }
+      },
+      "WaterRateResponse": {
+        "type": "object",
+        "properties": {
+          "dailyNorma": {
+            "type": "number",
+            "description": "User daily norma",
+            "example": 2.4
           }
         }
       },
