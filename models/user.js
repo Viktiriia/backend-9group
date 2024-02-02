@@ -20,7 +20,7 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      select: false,
+      // select: false,
       required: [true, "Set password for user"],
     },
     gender: {
@@ -45,7 +45,6 @@ const userSchema = new Schema(
     verify: {
       type: Boolean,
       default: false,
-      select: false,
     },
     verificationToken: {
       type: String,
