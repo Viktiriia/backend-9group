@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { User } = require("../models/user");
 const { TOKEN_KEY } = process.env;
+const { nanoid } = require("nanoid");
 // const { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY, } = process.env;
 
 const { ctrlWrapper } = require("../helpers");
@@ -19,6 +20,7 @@ const register = async (req, res) => {
 
   const hashPassword = await bcrypt.hash(password, 10);
   const avatarURL = gravatar.url(email);
+  const verificationToken = nanoid();
 
   const userName = email.split("@")[0];
 
@@ -27,6 +29,7 @@ const register = async (req, res) => {
     password: hashPassword,
     avatarURL,
     name: userName,
+    verificationToken,
   });
 
   res.status(201).json({
@@ -41,6 +44,7 @@ const login = async (req, res) => {
   if (!user) {
     throw HttpError(401, "Email or password is wrong");
   }
+
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
     throw HttpError(401, "Email or password is wrong");
@@ -51,8 +55,8 @@ const login = async (req, res) => {
   };
 
   const token = jwt.sign(payload, TOKEN_KEY, { expiresIn: "23h" });
-  await User.findByIdAndUpdate(user._id, { token });
-  console.log(token);
+  await User.findByIdAndUpdate(user._id, { token, verify: true });
+
   res.status(200).json({
     token,
     user: {
