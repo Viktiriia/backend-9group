@@ -51,7 +51,7 @@ const userSchema = new Schema(
       required: [true, "Verify token is required"],
     },
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false}
 );
 
 userSchema.post("save", handleMongooseError);
@@ -76,11 +76,19 @@ const addSchema = Joi.object({
   avatarURL: Joi.string(),
 });
 
+const waterRateSchema = Joi.object({
+  dailyNorma: Joi.number()
+    .required()
+    .max(15)
+    .message({ "any.required": "missing required dailyNorma field" }),
+});
+
 const schemas = {
   registerSchema,
   loginSchema,
   refreshSchema,
   addSchema,
+  waterRateSchema
 };
 
 const User = model("user", userSchema);
