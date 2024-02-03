@@ -93,7 +93,7 @@ const getToday = async (req, res) => {
 
   if (!waterData) {
     res.json({
-      waterAll: 0,
+      totalWater: 0,
       percentage: 0,
       entries: [],
     });
@@ -111,9 +111,44 @@ const getToday = async (req, res) => {
 
   res.json(dailyWater);
 };
+
+const getMonth = async (req, res) => {
+  const { _id: owner } = req.user;
+  const { data } = req.params;
+
+  const month = new Date();
+  const waterData = await Water.findOne({
+    month: {
+      $gte: new Date(month.getFullYear(), month.getMonth(), month.getDate()),
+    },
+    owner
+  });
+  if(!waterData){
+    res.json({
+      totalWater: 0,
+      percentage: 0,
+      entries: [],
+  })
+}
+
+const totalAmountWater = waterData.totalAmountWater || 0;
+const dailyNorma = waterData.dailyNorma || 1;
+
+  const calcMonth = {totalWater: waterData.entries.length,
+    percentage: Math.floor((totalAmountWater / (dailyNorma * 1000)) * 100),
+    entries: waterData.entries,
+};
+if(!calcMonth.length){
+  throw HttpError(404, "Not found");
+};
+
+  res.json({month:calcMonth})
+
+}
 module.exports = {
   addWater: ctrlWrapper(addWater),
   updateWater: ctrlWrapper(updateWater),
   deleteWater: ctrlWrapper(deleteWater),
   getToday: ctrlWrapper(getToday),
+  getMonth: ctrlWrapper(getMonth),
 };

@@ -514,23 +514,37 @@
           }
         }
       },
-      "RegisterResponse": {
+      "RegistrationResponse": {
         "type": "object",
         "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User email address",
-            "example": "user@example.com"
-          },
-          "name": {
-            "type": "string",
-            "description": "User name",
-            "example": "user"
+          "user": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "User's email address",
+                "example": "example@example.com"
+              },
+              "avatarURL": {
+                "type": "string",
+                "description": "URL or path to user's avatar",
+                "example":  "//www.gravatar.com/avatar/592c85fc2fb1b3cf8fa5ec9d80e4df70"
+              },
+              "gender": {
+                "type": "string",
+                "description": "User's gender",
+                "example": "male"
+              },
+              "dailyNorma": {
+                "type": "number",
+                "description": "User's daily norma",
+                "example": 2
+              }
+            }
           }
         }
       },
-
       "LoginRequest": {
         "type": "object",
         "required": ["email", "password"],
@@ -541,10 +555,10 @@
             "format": "email",
             "example": "user@gmail.com"
           },
-          "name": {
+          "password": {
             "type": "string",
-            "description": "User name",
-            "example": "user"
+            "description": "User's password",
+            "example": "123456789"
           }
         }
       },

@@ -26,4 +26,8 @@ router.delete("/:waterId", authenticate, isValidId, ctrl.deleteWater);
 
 router.get("/today", authenticate, ctrl.getToday);
 
+router.get("/month/:data", ctrl.getMonth)
+
+
+
 module.exports = router;
