@@ -173,8 +173,7 @@
       "get": {
         "tags": ["User"],
         "summary": "User Information",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -206,8 +205,7 @@
       "patch": {
         "tags": ["User"],
         "summary": "User update",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Users's fields update",
@@ -250,8 +248,7 @@
       "patch": {
         "tags": ["User"],
         "summary": "Avatar update",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
@@ -301,8 +298,7 @@
       "patch": {
         "tags": ["User"],
         "summary": "Daily norma update",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Update water rate",
@@ -342,7 +338,6 @@
         }
       }
     },
-
 
     "/api/water/add": {
       "post": {
@@ -483,7 +478,7 @@
               }
             }
           },
-  
+
           "400": {
             "description": "Bad request"
           },
@@ -500,7 +495,6 @@
       }
     }
   },
- 
 
   "components": {
     "schemas": {
@@ -590,8 +584,18 @@
           "email": {
             "type": "string",
             "format": "email",
-            "description": "User's email address",
+            "description": "User email address",
             "example": "user@gmail.com"
+          },
+          "avatarURL": {
+            "type": "string",
+            "description": "URL or path to user avatar",
+            "example": "https://www.gravatar.com/avatar/26ff068050ca831bbff5bcae0cb45723"
+          },
+          "dailyNorma": {
+            "type": "number",
+            "description": "User dailyNorma address",
+            "example": 2.4
           }
         }
       },
@@ -599,31 +603,31 @@
       "GetInfoResponse": {
         "type": "object",
         "properties": {
-          "user": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "User's name",
-                "example": "UserName"
-              },
-              "email": {
-                "type": "string",
-                "format": "email",
-                "description": "User's email address",
-                "example": "example@example.com"
-              },
-              "avatar": {
-                "type": "string",
-                "description": "URL or path to user's avatar",
-                "example": "https://www.gravatar.com/avatar/26ff068050ca831bbff5bcae0cb45723"
-              },
-              "gender": {
-                "type": "string",
-                "description": "User's gender",
-                "example": "male"
-              }
-            }
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "UserName"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address",
+            "example": "example@example.com"
+          },
+          "avatarURL": {
+            "type": "string",
+            "description": "URL or path to user's avatar",
+            "example": "https://www.gravatar.com/avatar/26ff068050ca831bbff5bcae0cb45723"
+          },
+          "gender": {
+            "type": "string",
+            "description": "User's gender",
+            "example": "male"
+          },
+          "dailyNorma": {
+            "type": "number",
+            "description": "User dailyNorma address",
+            "example": 2.4
           }
         }
       },
@@ -634,17 +638,6 @@
             "type": "string",
             "description": "User name",
             "example": "User name"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email address",
-            "example": "user@example.com"
-          },
-          "avatar": {
-            "type": "string",
-            "description": "URL or path to user's avatar",
-            "example": "https://www.gravatar.com/avatar/26ff068050ca831bbff5bcae0cb45723"
           },
           "gender": {
             "type": "string",
@@ -661,30 +654,18 @@
             "description": "User name",
             "example": "User name"
           },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email address",
-            "example": "user@example.com"
-          },
-          "avatar": {
-            "type": "string",
-            "description": "URL or path to user's avatar",
-            "example": "https://www.gravatar.com/avatar/26ff068050ca831bbff5bcae0cb45723"
-          },
           "gender": {
             "type": "string",
             "description": "User's gender",
             "example": "male"
           }
-         
         }
       },
       "UpdateAvatarRequest": {
         "type": "file",
         "required": [],
         "properties": {
-          "avatar": {
+          "avataravatarURL": {
             "type": "form-data",
             "description": "Avatar file"
           }
@@ -693,7 +674,7 @@
       "UpdateAvatarResponse": {
         "type": "object",
         "properties": {
-          "avatar": {
+          "avatarURL": {
             "type": "string",
             "description": "URL or path to user's avatar",
             "example": "https://res.cloudinary.com/dq9jwcrpl/image/upload/v1706882781/avatars/65bce01778f0a6969a9bf3fd.png"
@@ -745,26 +726,28 @@
         "properties": {
           "entries": {
             "type": "object",
-        "properties": {
-          "amountWater": {
-            "type": "number",
-            "description": "the amount of water drunk",
-            "example": 200
-          },
-          "day": {
-            "type": "number",
-            "description": "day",
-            "example": "5"
-          },
-          "_id": {
-            "type": "string",
-            "description": "Water id",
-            "example": "65bac4d3ac8b677558915edc"
-          },
-          "time": {
-            "type": "string",
-            "description": "The time when the water was drunk",
-            "example": "2024-01-31T22:08:19.638Z"
+            "properties": {
+              "amountWater": {
+                "type": "number",
+                "description": "the amount of water drunk",
+                "example": 200
+              },
+              "day": {
+                "type": "number",
+                "description": "day",
+                "example": "5"
+              },
+              "_id": {
+                "type": "string",
+                "description": "Water id",
+                "example": "65bac4d3ac8b677558915edc"
+              },
+              "time": {
+                "type": "string",
+                "description": "The time when the water was drunk",
+                "example": "2024-01-31T22:08:19.638Z"
+              }
+            }
           },
           "totalAmountWater": {
             "type": "number",
@@ -772,9 +755,6 @@
             "example": 200
           }
         }
-     
-      }
-      }
       },
       "UpdateWaterRequest": {
         "type": "object",
@@ -790,25 +770,30 @@
       "UpdateWaterResponse": {
         "type": "object",
         "properties": {
-          "amountWater": {
-            "type": "number",
-            "description": "the amount of water drunk",
-            "example": 270
-          },
-          "day": {
-            "type": "number",
-            "description": "day",
-            "example": "5"
-          },
-          "_id": {
-            "type": "string",
-            "description": "Water id",
-            "example": "65bac4d3ac8b677558915edc"
-          },
-          "time": {
-            "type": "string",
-            "description": "The time when the water was drunk",
-            "example": "2024-01-31T22:08:19.638Z"
+          "entries": {
+            "type": "object",
+            "properties": {
+              "amountWater": {
+                "type": "number",
+                "description": "the amount of water drunk",
+                "example": 270
+              },
+              "day": {
+                "type": "number",
+                "description": "day",
+                "example": "5"
+              },
+              "_id": {
+                "type": "string",
+                "description": "Water id",
+                "example": "65bac4d3ac8b677558915edc"
+              },
+              "time": {
+                "type": "string",
+                "description": "The time when the water was drunk",
+                "example": "2024-01-31T22:08:19.638Z"
+              }
+            }
           },
           "totalAmountWater": {
             "type": "number",
@@ -858,7 +843,7 @@
           }
         }
       }
-      },
+    },
 
     "securitySchemes": {
       "Bearer": {
