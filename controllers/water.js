@@ -81,34 +81,40 @@ const deleteWater = async (req, res) => {
   res.json(result);
 };
 
-const getToDay = async (req, res) => {
+const getToday = async (req, res) => {
+  const { _id: owner } = req.user;
 
-    const { _id: owner } = req.user;
-
-    const date = new Date();
-
-    const waterData = await Water.findOne({
+  const date = new Date();
+  const waterData = await Water.findOne({
       date: {
-        $gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+          $gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
       },
       owner,
-    });
+  });
 
-    if (!waterData) {
-      throw HttpError(404);
-    }
-
-    const dailyWater = {
-      amountWater: waterData.entries.length,
-      percentage: Math.floor((waterData.totalVolume / (waterData.dailyNorma * 1000)) * 100),
-      entries: waterData.entries,
-    };
-
-    res.json(dailyWater);
+  if (!waterData) {
+      res.json({
+          waterAll: 0,
+          percentage: 0,
+          entries: [],
+      });
+      return;
   }
+
+  const totalAmountWater = waterData.totalAmountWater || 0;
+  const dailyNorma = waterData.dailyNorma || 1;
+
+  const dailyWater = {
+      totalWater: waterData.entries.length,
+      percentage: Math.floor((totalAmountWater / (dailyNorma * 1000)) * 100),
+      entries: waterData.entries,
+  };
+
+  res.json(dailyWater);
+}
 module.exports = {
   addWater: ctrlWrapper(addWater),
   updateWater: ctrlWrapper(updateWater),
   deleteWater: ctrlWrapper(deleteWater),
-  getToDay: ctrlWrapper(getToDay),
+  getToday: ctrlWrapper(getToday),
 };

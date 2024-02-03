@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0.0",
+    "version": "2.0.2",
     "title": "Water API",
     "description": "API for user authentication",
     "license": {
@@ -465,8 +465,42 @@
           }
         }
       }
+    },
+    "/api/water/today": {
+      "get": {
+        "tags": ["Water"],
+        "summary": "Get water",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyWaterResponse"
+                }
+              }
+            }
+          },
+  
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
     }
   },
+ 
 
   "components": {
     "schemas": {
@@ -793,8 +827,38 @@
             "example": "65bac4d3ac8b677558915edc"
           }
         }
+      },
+      "DailyWaterResponse": {
+        "type": "object",
+        "properties": {
+          "totalWater": { "type": "integer", "example": 2 },
+          "percentage": { "type": "integer", "example": 20 },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "amountWater": { "type": "integer", "example": 200 },
+                "day": {
+                  "type": "number",
+                  "description": "day",
+                  "example": "5"
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "65b68e7c7a8fd23d2ed0b0c0"
+                },
+                "time": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "08:35 AM"
+                }
+              }
+            }
+          }
+        }
       }
-    },
+      },
 
     "securitySchemes": {
       "Bearer": {
