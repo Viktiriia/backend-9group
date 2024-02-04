@@ -148,28 +148,31 @@ const getToday = async (req, res) => {
 
 //   res.json({ month: result });
 // };
+
 const getMonth = async (req, res) => {
   const { _id: owner } = req.user;
 
-    const waterOfMonth = await Water.find({
-      owner,
-    });
+  const waterOfMonth = await Water.find({
+    owner,
+  });
 
-    const result = waterOfMonth.map(entry => {
-      const date = new Date(entry.date);
-      const dailyNorma = entry.dailyNorma || 1;
-      const totalAmountWater = entry.totalAmountWater || 0;
+  const result = waterOfMonth.map((entry) => {
+    const date = new Date(entry.date);
+    const dailyNorma = entry.dailyNorma || 1;
+    const totalAmountWater = entry.totalAmountWater || 0;
 
-      return {
-        date: `${date.getDate()}, ${date.toLocaleString('default', { month: 'long' })}`,
-        dailyNorma: `${dailyNorma} L`,
-        percentage: Math.floor((totalAmountWater / (dailyNorma * 1000)) * 100),
-        entriesCount: entry.entries.length,
-      };
-    });
+    return {
+      date: `${date.getDate()}, ${date.toLocaleString("default", {
+        month: "long",
+      })}`,
+      dailyNorma: `${dailyNorma} L`,
+      percentage: Math.floor((totalAmountWater / (dailyNorma * 1000)) * 100),
+      entriesCount: entry.entries.length,
+    };
+  });
 
-    res.json(result);
-  }
+  res.json(result);
+};
 
 module.exports = {
   addWater: ctrlWrapper(addWater),

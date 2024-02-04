@@ -70,13 +70,14 @@ const login = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-  const { email, gender, name, avatarURL, dailyNorma } = req.user;
+  const { email, gender, name, avatarURL, dailyNorma, _id } = req.user;
   res.json({
     email,
     gender,
     name,
     avatarURL,
     dailyNorma,
+    _id,
   });
 };
 

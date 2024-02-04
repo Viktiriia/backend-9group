@@ -16,7 +16,7 @@ router.get("/current", authenticate, ctrl.getCurrent);
 
 router.post("/logout", authenticate, ctrl.logout);
 
-// router.post("/forgot-password", authenticate, ctrl.forgotPassword);
+router.post("/forgot-password", authenticate, ctrl.forgotPassword);
 
 // router.post("/refresh", validateBody(schemas.refreshSchema), ctrl.refresh);
 
