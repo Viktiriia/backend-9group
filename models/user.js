@@ -74,6 +74,9 @@ const addSchema = Joi.object({
   name: Joi.string(),
   gender: Joi.string(),
   avatarURL: Joi.string(),
+  email: Joi.string().pattern(emailRegexp).required(),
+  password: Joi.string().min(8).max(64),
+  newPassword: Joi.string().min(8).max(64),
 });
 
 const waterRateSchema = Joi.object({
