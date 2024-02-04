@@ -32,7 +32,6 @@ const waterSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "user",
     },
-    
   },
   { versionKey: false }
 );

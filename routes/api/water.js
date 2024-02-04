@@ -5,7 +5,7 @@ const ctrl = require("../../controllers/water");
 const {
   authenticate,
   isValidId,
-  // isValidateMonth,
+  isValidateMonth,
 } = require("../../middlewares");
 
 const router = express.Router();
@@ -30,6 +30,6 @@ router.delete("/:waterId", authenticate, isValidId, ctrl.deleteWater);
 
 router.get("/today", authenticate, ctrl.getToday);
 
-router.get("/month/:date", authenticate,  ctrl.getMonth);
+router.get("/month/:date", authenticate, isValidateMonth, ctrl.getMonth);
 
 module.exports = router;
