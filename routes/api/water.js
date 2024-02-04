@@ -2,7 +2,11 @@ const express = require("express");
 const validateBody = require("../../middlewares/vaidateBody");
 const { schemas } = require("../../models/water");
 const ctrl = require("../../controllers/water");
-const { authenticate, isValidId } = require("../../middlewares");
+const {
+  authenticate,
+  isValidId,
+  isValidateMonth,
+} = require("../../middlewares");
 
 const router = express.Router();
 
@@ -26,8 +30,6 @@ router.delete("/:waterId", authenticate, isValidId, ctrl.deleteWater);
 
 router.get("/today", authenticate, ctrl.getToday);
 
-router.get("/month/:data", ctrl.getMonth)
-
-
+router.get("/month/:data", authenticate, isValidateMonth, ctrl.getMonth);
 
 module.exports = router;

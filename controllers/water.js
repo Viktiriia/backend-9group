@@ -116,35 +116,40 @@ const getMonth = async (req, res) => {
   const { _id: owner } = req.user;
   const { data } = req.params;
 
-  const month = new Date();
-  const waterData = await Water.findOne({
+  const month = new Date(data);
+  const nextMonth = new Date(month);
+  nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+  const waterData = await Water.find({
     month: {
-      $gte: new Date(month.getFullYear(), month.getMonth(), month.getDate()),
+      $gte: month,
+      $lt: nextMonth,
     },
-    owner
+    owner,
   });
-  if(!waterData){
-    res.json({
-      totalWater: 0,
-      percentage: 0,
-      entries: [],
-  })
-}
 
-const totalAmountWater = waterData.totalAmountWater || 0;
-const dailyNorma = waterData.dailyNorma || 1;
+  if (!waterData || waterData.length === 0) {
+    return res.json({
+      month: [],
+    });
+  }
 
-  const calcMonth = {totalWater: waterData.entries.length,
-    percentage: Math.floor((totalAmountWater / (dailyNorma * 1000)) * 100),
-    entries: waterData.entries,
+  const result = waterData.map((dayData) => {
+    const day = new Date(dayData.month);
+    const totalAmountWater = dayData.totalAmountWater || 0;
+    const dailyNorma = dayData.dailyNorma || 1;
+
+    return {
+      date: `${day.getDate()}, ${day.toLocaleString("en", { month: "long" })}`,
+      dailyNorma: `${dailyNorma} L`,
+      percentage: Math.floor((totalAmountWater / (dailyNorma * 1000)) * 100),
+      entriesCount: dayData.entries.length,
+    };
+  });
+
+  res.json({ month: result });
 };
-if(!calcMonth.length){
-  throw HttpError(404, "Not found");
-};
 
-  res.json({month:calcMonth})
-
-}
 module.exports = {
   addWater: ctrlWrapper(addWater),
   updateWater: ctrlWrapper(updateWater),
