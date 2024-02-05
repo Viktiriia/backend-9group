@@ -1,4 +1,5 @@
 const { User } = require("../models/user");
+const bcrypt = require("bcrypt");
 
 const { ctrlWrapper } = require("../helpers");
 const { HttpError } = require("../helpers");
@@ -38,12 +39,14 @@ const getInfoUser = async (req, res) => {
 };
 
 const getUserUpdateById = async (req, res) => {
+  let updatedUser;
+
   const { _id } = req.user;
-  const { name, avatarURL, gender, dailyNorma, email } = req.body;
+  const { name, gender, password, dailyNorma, newPassword } = req.body;
 
   const result = await User.findByIdAndUpdate(
     _id,
-    { name, avatarURL, gender },
+    { name, dailyNorma, gender },
     { new: true }
   ).populate("_id email password");
 
@@ -55,12 +58,45 @@ const getUserUpdateById = async (req, res) => {
     throw HttpError(404, "Not found");
   }
 
+  if (password && newPassword) {
+    if (password === newPassword) {
+      throw HttpError(
+        401,
+        "The new password cannot be identical to the old one"
+      );
+    }
+
+    const user = await User.findById(_id);
+    if (!user) {
+      throw HttpError(404);
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(422).json({
+        message: "Provided password does not match user's current password",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    updatedUser = await user.save();
+  } else {
+    const updateInfo = { name, gender };
+    updatedUser = await User.findByIdAndUpdate(_id, updateInfo, { new: true });
+    if (!updatedUser) {
+      throw HttpError(404);
+    }
+  }
+
   res.json({
-    name,
-    avatarURL,
-    gender,
-    dailyNorma,
-    email,
+    user: {
+      name: updatedUser.name,
+      email: updatedUser.email,
+      gender: updatedUser.gender,
+      dailyNorma,
+    },
   });
 };
 
@@ -81,34 +117,9 @@ const waterRate = async (req, res) => {
   res.json({ dailyNorma });
 };
 
-const changePassword = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    throw HttpError(401, "Email is wrong");
-  }
-
-  const isCorrectPassword = await bcrypt.compare(password, foundUser.password);
-  if (!isCorrectPassword) {
-    throw HttpError(401, "Email or password is wrong");
-  }
-
-  const hashPassword = await bcrypt.hash(password, 10);
-
-  const newPassword = await User.create({
-    ...req.body,
-    password: hashPassword,
-  });
-
-  res.status(201).json({
-    email: newPassword.email,
-  });
-};
-
 module.exports = {
   getInfoUser: ctrlWrapper(getInfoUser),
   getUserUpdateById: ctrlWrapper(getUserUpdateById),
   updateAvatar: ctrlWrapper(updateAvatar),
   waterRate: ctrlWrapper(waterRate),
-  changePassword: ctrlWrapper(changePassword),
 };

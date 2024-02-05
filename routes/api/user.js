@@ -21,7 +21,7 @@ router.patch(
 router.get("/:userId", authenticate, isValidId, ctrl.getInfoUser);
 
 router.patch(
-  "/update/:userId",
+  "/update",
   authenticate,
   isValidId,
   validateBody(schemas.addSchema),
@@ -34,7 +34,5 @@ router.patch(
   validateBody(schemas.waterRateSchema),
   ctrl.waterRate
 );
-
-// router.patch("/change-password", authenticate, ctrl.changePassword);
 
 module.exports = router;
