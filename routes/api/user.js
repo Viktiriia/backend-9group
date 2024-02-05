@@ -35,6 +35,4 @@ router.patch(
   ctrl.waterRate
 );
 
-// router.patch("/change-password", authenticate, ctrl.changePassword);
-
 module.exports = router;
