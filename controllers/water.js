@@ -150,7 +150,7 @@ const monthInfo = async (req, res) => {
       date: `${months[getMonth]}, ${getDay}`,
       dailyNorma: `${dailyNorma} L`,
       percentage: Math.floor((totalAmountWater / (dailyNorma * 1000)) * 100),
-      entriesCount: entry.entries.length,
+      recordsWaterConsumption: entry.entries.length,
     };
   });
 

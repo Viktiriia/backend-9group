@@ -18,10 +18,10 @@ router.patch(
   ctrl.updateAvatar
 );
 
-router.get("/:userId", authenticate, isValidId, ctrl.getInfoUser);
+router.get("/info", authenticate, isValidId, ctrl.getInfoUser);
 
 router.patch(
-  "/update/:userId",
+  "/update",
   authenticate,
   isValidId,
   validateBody(schemas.addSchema),
