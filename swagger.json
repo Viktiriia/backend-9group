@@ -169,7 +169,7 @@
       }
     },
 
-    "/user/{userId}": {
+    "/user/info": {
       "get": {
         "tags": ["User"],
         "summary": "User Information",
@@ -201,7 +201,7 @@
         }
       }
     },
-    "/user/update/{userId}": {
+    "/user/update": {
       "patch": {
         "tags": ["User"],
         "summary": "User update",
@@ -493,6 +493,50 @@
           }
         }
       }
+    },
+    "/api/water/month/{date}": {
+      "get": {
+        "tags": ["Water"],
+        "summary": "Get water",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Get all water portions for the month",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonthlyWaterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthlyWaterResponse"
+                }
+              }
+            }
+          },
+
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
     }
   },
 
@@ -529,7 +573,7 @@
               "avatarURL": {
                 "type": "string",
                 "description": "URL or path to user's avatar",
-                "example":  "//www.gravatar.com/avatar/592c85fc2fb1b3cf8fa5ec9d80e4df70"
+                "example": "//www.gravatar.com/avatar/592c85fc2fb1b3cf8fa5ec9d80e4df70"
               },
               "gender": {
                 "type": "string",
@@ -585,6 +629,11 @@
       "CurrentResponse": {
         "type": "object",
         "properties": {
+          "_id": {
+            "type": "string",
+            "description": "User _id",
+            "example": "65c01cb5247ddbcdd41e49cb"
+          },
           "gender": {
             "type": "string",
             "description": "User gender",
@@ -855,6 +904,16 @@
               }
             }
           }
+        }
+      },
+      "MonthlyWaterResponse": {
+        "type": "object",
+
+        "properties": {
+          "date": { "type": "string", "example": "January, 5" },
+          "recordsWaterConsumption": { "type": "number", "example": 2 },
+          "dailyNorma": { "type": "number", "example": 2 },
+          "percentage": { "type": "integer", "example": 25 }
         }
       }
     },
