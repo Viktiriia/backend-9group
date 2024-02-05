@@ -10,7 +10,6 @@ const {
 
 const router = express.Router();
 
-// - Додавання запису по спожитій воді
 router.post(
   "/add",
   authenticate,
@@ -18,7 +17,6 @@ router.post(
   ctrl.addWater
 );
 
-// - Редагування запису по спожитій воді
 router.put(
   "/update/:waterId",
   authenticate,
@@ -30,6 +28,6 @@ router.delete("/:waterId", authenticate, isValidId, ctrl.deleteWater);
 
 router.get("/today", authenticate, ctrl.getToday);
 
-router.get("/month/:date", authenticate, isValidateMonth, ctrl.getMonth);
+router.get("/month/:date", authenticate, isValidateMonth, ctrl.monthInfo);
 
 module.exports = router;

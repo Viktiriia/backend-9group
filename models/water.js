@@ -25,7 +25,7 @@ const waterSchema = new Schema(
       default: 0,
     },
     date: {
-      type: String,
+      type: Date,
       default: new Date(),
     },
     owner: {

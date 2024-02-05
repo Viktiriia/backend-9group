@@ -32,12 +32,6 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
-    // accessToken: {
-    //   type: String,
-    // },
-    // refreshToken: {
-    //   type: String,
-    // },
     avatarURL: {
       type: String,
       required: true,
@@ -66,10 +60,6 @@ const loginSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
 });
 
-// const refreshSchema = Joi.object({
-//   refreshToken: Joi.string().required(),
-// });
-
 const addSchema = Joi.object({
   name: Joi.string(),
   gender: Joi.string(),
@@ -89,7 +79,6 @@ const waterRateSchema = Joi.object({
 const schemas = {
   registerSchema,
   loginSchema,
-  // refreshSchema,
   addSchema,
   waterRateSchema,
 };
