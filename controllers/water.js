@@ -111,60 +111,43 @@ const getToday = async (req, res) => {
 
   res.json(dailyWater);
 };
-// const getMonth = async (req, res) => {
-//   const { _id: owner } = req.user;
-//   const { data } = req.params;
 
-//   const month = new Date(data);
-//   const nextMonth = new Date(month);
-//   nextMonth.setMonth(nextMonth.getMonth() + 1);
-
-//   const waterData = await Water.find({
-//     month: {
-//       $gte: month,
-//       $lt: nextMonth,
-//     },
-//     owner,
-//   });
-
-//   if (!waterData || waterData.length === 0) {
-//     return res.json({
-//       month: [],
-//     });
-//   }
-
-//   const result = waterData.map((dayData) => {
-//     const day = new Date(dayData.month);
-//     const totalAmountWater = dayData.totalAmountWater || 0;
-//     const dailyNorma = dayData.dailyNorma || 1;
-
-//     return {
-//       date: `${day.getDate()}, ${day.toLocaleString("en", { month: "long" })}`,
-//       dailyNorma: `${dailyNorma} L`,
-//       percentage: Math.floor((totalAmountWater / (dailyNorma * 1000)) * 100),
-//       entriesCount: dayData.entries.length,
-//     };
-//   });
-
-//   res.json({ month: result });
-// };
-
-const getMonth = async (req, res) => {
+const monthInfo = async (req, res) => {
   const { _id: owner } = req.user;
+  const { date } = req.params;
+
+  const [year, month] = date.split("-");
+  const startDate = new Date(Date.UTC(year, month - 1, 1));
+  const endDate = new Date(Date.UTC(year, month, 0));
 
   const waterOfMonth = await Water.find({
+    date: { $gte: startDate, $lte: endDate },
     owner,
   });
 
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   const result = waterOfMonth.map((entry) => {
-    const date = new Date(entry.date);
-    const dailyNorma = entry.dailyNorma || 1;
+    const getMonth = entry.date.getMonth();
+    const getDay = entry.date.getDate();
+    const dailyNorma = entry.dailyNorma || 2;
     const totalAmountWater = entry.totalAmountWater || 0;
 
     return {
-      date: `${date.getDate()}, ${date.toLocaleString("default", {
-        month: "long",
-      })}`,
+      date: `${months[getMonth]}, ${getDay}`,
       dailyNorma: `${dailyNorma} L`,
       percentage: Math.floor((totalAmountWater / (dailyNorma * 1000)) * 100),
       entriesCount: entry.entries.length,
@@ -179,5 +162,5 @@ module.exports = {
   updateWater: ctrlWrapper(updateWater),
   deleteWater: ctrlWrapper(deleteWater),
   getToday: ctrlWrapper(getToday),
-  getMonth: ctrlWrapper(getMonth),
+  monthInfo: ctrlWrapper(monthInfo),
 };

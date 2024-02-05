@@ -4,7 +4,6 @@ require("dotenv").config();
 const { User } = require("../models/user");
 const { TOKEN_KEY } = process.env;
 const { nanoid } = require("nanoid");
-// const { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY, } = process.env;
 
 const { ctrlWrapper } = require("../helpers");
 const { HttpError } = require("../helpers");
@@ -89,72 +88,9 @@ const logout = async (req, res) => {
   });
 };
 
-// const logout = async (req, res) => {
-//   const { _id } = req.user;
-//   await User.findByIdAndUpdate(_id, { accessToken: "", refreshToken: "" });
-//   res.json({
-//     message: "Logout success",
-//   });
-// };
-
-// const refresh = async (req, res) => {
-//   const { refreshToken: token } = req.body;
-//   try {
-//     const { id } = jwt.verify(token, REFRESH_SECRET_KEY);
-//     const isExist = await User.findOne({ refreshToken: token });
-//     if (!isExist) {
-//       throw HttpError(403, "Token invalid");
-//     }
-
-//     const payload = {
-//       id,
-//     };
-
-//     const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, {
-//       expiresIn: "2m",
-//     });
-//     const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, {
-//       expiresIn: "7d",
-//     });
-
-//     res.json({
-//       accessToken,
-//       refreshToken,
-//     });
-//   } catch (error) {
-//     throw HttpError(403, error.message);
-//   }
-// };
-
-const forgotPassword = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    throw HttpError(401, "Email is wrong");
-  }
-
-  const isCorrectPassword = await bcrypt.compare(password, foundUser.password);
-  if (!isCorrectPassword) {
-    throw HttpError(401, "Email or password is wrong");
-  }
-
-  const hashPassword = await bcrypt.hash(password, 10);
-
-  const newPassword = await User.create({
-    ...req.body,
-    password: hashPassword,
-  });
-
-  res.status(201).json({
-    email: newPassword.email,
-  });
-};
-
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
-  forgotPassword: ctrlWrapper(forgotPassword),
-  // refresh: ctrlWrapper(refresh),
 };

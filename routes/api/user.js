@@ -11,7 +11,6 @@ const {
   upload,
 } = require("../../middlewares");
 
-// Створити ендпоінт для додавання/зміни зображення, аватару користувача
 router.patch(
   "/avatars",
   authenticate,
@@ -19,10 +18,8 @@ router.patch(
   ctrl.updateAvatar
 );
 
-// Створити ендпоінт для отримання інформації про користувача
 router.get("/:userId", authenticate, isValidId, ctrl.getInfoUser);
 
-// Створити ендпоінт для оновлення інформації про користувача або одного з полів контактної інформації
 router.patch(
   "/update/:userId",
   authenticate,
@@ -37,5 +34,7 @@ router.patch(
   validateBody(schemas.waterRateSchema),
   ctrl.waterRate
 );
+
+// router.patch("/change-password", authenticate, ctrl.changePassword);
 
 module.exports = router;
