@@ -15,7 +15,7 @@
       "description": "Local development server"
     },
    {
-    "url":  " https://backend-225p.onrender.com/api-docs/",
+    "url": "https://backend-225p.onrender.com",
     "description": "Remote development server"
   }
   ],
