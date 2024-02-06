@@ -1,8 +1,5 @@
-const Joi = require("joi");
 const { Schema, model } = require("mongoose");
 const { handleMongooseError } = require("../helpers");
-
-const emailRegexp = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
 
 const userSchema = new Schema(
   {
@@ -15,7 +12,6 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      match: emailRegexp,
       required: [true, "Email is required"],
       unique: true,
     },
@@ -40,8 +36,9 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    verificationToken: {
+    verificationCode: {
       type: String,
+      default: "",
       required: [true, "Verify token is required"],
     },
   },
@@ -50,42 +47,8 @@ const userSchema = new Schema(
 
 userSchema.post("save", handleMongooseError);
 
-const registerSchema = Joi.object({
-  password: Joi.string().min(8).max(64).required(),
-  email: Joi.string().pattern(emailRegexp).required(),
-});
-
-const loginSchema = Joi.object({
-  password: Joi.string().min(8).max(64).required(),
-  email: Joi.string().pattern(emailRegexp).required(),
-});
-
-const addSchema = Joi.object({
-  name: Joi.string(),
-  gender: Joi.string(),
-  avatarURL: Joi.string(),
-  email: Joi.string().pattern(emailRegexp),
-  password: Joi.string().min(8).max(64),
-  newPassword: Joi.string().min(8).max(64),
-});
-
-const waterRateSchema = Joi.object({
-  dailyNorma: Joi.number()
-    .required()
-    .max(15)
-    .message({ "any.required": "missing required dailyNorma field" }),
-});
-
-const schemas = {
-  registerSchema,
-  loginSchema,
-  addSchema,
-  waterRateSchema,
-};
-
 const User = model("user", userSchema);
 
 module.exports = {
   User,
-  schemas,
 };

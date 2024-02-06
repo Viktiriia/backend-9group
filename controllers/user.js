@@ -20,8 +20,8 @@ const updateAvatar = async (req, res) => {
 };
 
 const getInfoUser = async (req, res) => {
-  const { userId } = req.params;
-  const result = await User.findById(userId);
+  const { _id } = req.user;
+  const result = await User.findById(_id);
 
   if (!result) {
     throw HttpError(404, "Not found");
