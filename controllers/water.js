@@ -18,8 +18,14 @@ const findExistingEntryAndCalculateOldAmount = async (waterId) => {
 const addWater = async (req, res, next) => {
   const { _id: owner } = req.user;
   const { amountWater, time } = req.body;
-
-  const existingWaterData = await Water.findOne({ owner });
+  
+  const date = new Date();
+  const existingWaterData = await Water.findOne({
+    date: {
+      $gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+    },
+    owner,
+  });
 
   if (existingWaterData) {
     const updatedResult = await Water.findOneAndUpdate(
