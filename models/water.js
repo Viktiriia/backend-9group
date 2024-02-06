@@ -1,4 +1,3 @@
-const Joi = require("joi");
 const { handleMongooseError } = require("../helpers");
 const { Schema, model } = require("mongoose");
 
@@ -38,24 +37,8 @@ const waterSchema = new Schema(
 
 waterSchema.post("save", handleMongooseError);
 
-const entriesWaterSchemas = Joi.object({
-  amountWater: Joi.number().min(1).max(15000),
-  day: Joi.number().min(1).max(31),
-});
-
-const updateWaterSchemas = Joi.object({
-  amountWater: Joi.number().min(1).max(15000),
-  day: Joi.number().min(1).max(31),
-});
-
-const schemas = {
-  entriesWaterSchemas,
-  updateWaterSchemas,
-};
-
 const Water = model("water", waterSchema);
 
 module.exports = {
   Water,
-  schemas,
 };

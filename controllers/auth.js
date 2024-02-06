@@ -2,11 +2,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { User } = require("../models/user");
-const { TOKEN_KEY } = process.env;
+const { TOKEN_KEY, URL_FORGOT_PASSWORD } = process.env;
 const { nanoid } = require("nanoid");
+const { ctrlWrapper, HttpError, sendEmail } = require("../helpers");
 
-const { ctrlWrapper } = require("../helpers");
-const { HttpError } = require("../helpers");
 const gravatar = require("gravatar");
 
 const register = async (req, res) => {
@@ -19,7 +18,7 @@ const register = async (req, res) => {
 
   const hashPassword = await bcrypt.hash(password, 10);
   const avatarURL = gravatar.url(email);
-  const verificationToken = nanoid();
+  const verificationCode = nanoid();
 
   const userName = email.split("@")[0];
 
@@ -28,7 +27,7 @@ const register = async (req, res) => {
     password: hashPassword,
     avatarURL,
     name: userName,
-    verificationToken,
+    verificationCode,
   });
 
   res.status(201).json({
@@ -83,9 +82,42 @@ const getCurrent = async (req, res) => {
 const logout = async (req, res) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: "" });
-  res.json({
-    Authorization: "Bearer {{token}}",
-  });
+
+  res
+    .status(204)
+    .json({
+      message: "Bearer {{token}}",
+    })
+    .message("No Content");
+};
+
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw HttpError(404);
+  }
+
+  await sendEmail(messages.resetMessage(email, user));
+
+  res.json({ email: "Email sent successfully" });
+};
+
+const resetPassword = async (req, res) => {
+  const { password, id } = req.body;
+
+  const user = await findUserById(id);
+  if (!user) {
+    throw HttpError(404);
+  }
+
+  user.password = password;
+  await user.hashPassword();
+  await user.save();
+
+  res.json({ message: "Password changed" });
 };
 
 module.exports = {
@@ -93,4 +125,6 @@ module.exports = {
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
+  resetPassword: ctrlWrapper(resetPassword),
+  forgotPassword: ctrlWrapper(forgotPassword),
 };

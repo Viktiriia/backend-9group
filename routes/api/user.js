@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const ctrl = require("../../controllers/user");
 
-const { schemas } = require("../../models/user");
+const { schemas } = require("../../Schemas/userSchemas");
 
 const {
   isValidId,
