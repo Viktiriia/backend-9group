@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { User } = require("../models/user");
-const { TOKEN_KEY } = process.env;
+const { TOKEN_KEY, URL_AT_SITE } = process.env;
 const { nanoid } = require("nanoid");
 const { ctrlWrapper, HttpError, sendEmail } = require("../helpers");
 
@@ -41,7 +41,7 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, dailyNorma, avatarURL, gender } = req.body;
   const user = await User.findOne({ email });
   if (!user) {
     throw HttpError(401, "Email or password is wrong");
@@ -57,12 +57,15 @@ const login = async (req, res) => {
   };
 
   const token = jwt.sign(payload, TOKEN_KEY, { expiresIn: "23h" });
-  await User.findByIdAndUpdate(user._id, { token, verify: true });
+  await User.findByIdAndUpdate(user._id, { token });
 
   res.status(200).json({
     token,
     user: {
       email: user.email,
+      avatarURL,
+      gender,
+      dailyNorma,
     },
   });
 };
@@ -100,22 +103,29 @@ const forgotPassword = async (req, res) => {
     throw HttpError(404);
   }
 
-  await sendEmail(messages.resetMessage(email, user));
+  const verifyEmail = {
+    to: email,
+    subject: "Veriry Email",
+    html: `<a target="_blank" href="${URL_AT_SITE}/reset-password?userId=${user._id}">Click verify email</a>`,
+  };
+
+  await sendEmail(verifyEmail);
 
   res.json({ email: "Email sent successfully" });
 };
 
 const resetPassword = async (req, res) => {
-  const { password, _id } = req.body;
+  const { password, id } = req.body;
 
-  const user = await User.findByIdAndUpdate(_id);
+  const user = await User.findOne(id);
   if (!user) {
     throw HttpError(404);
   }
 
   user.password = password;
-  await user.hashPassword();
-  await user.save();
+  const newPassword = await bcrypt.hash(password, 10);
+
+  user.save(newPassword);
 
   res.json({ message: "Password changed" });
 };
