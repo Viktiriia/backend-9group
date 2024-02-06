@@ -391,7 +391,17 @@
       "put": {
         "tags": ["Water"],
         "summary": "Update water",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "waterId",
+            "description": "waterId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Update of drunk water",
@@ -502,7 +512,15 @@
       "get": {
         "tags": ["Water"],
         "summary": "Get water",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": "true",
+            "type": "string",
+            "description": "Year and month of drink water"
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Get all water portions for the month",
@@ -625,6 +643,21 @@
                 "format": "email",
                 "description": "User email ",
                 "example": "test123@gmail.com"
+              },
+              "name": {
+                "type": "string",
+                "description": "User password",
+                "example": "user"
+              },
+              "avatarURL": {
+                "type": "string",
+                "description": "URL or path to user's avatar",
+                "example": "//www.gravatar.com/avatar/592c85fc2fb1b3cf8fa5ec9d80e4df70"
+              },
+              "gender": {
+                "type": "string",
+                "description": "User's gender",
+                "example": "male"
               }
             }
           }
