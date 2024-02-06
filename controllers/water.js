@@ -17,7 +17,8 @@ const findExistingEntryAndCalculateOldAmount = async (waterId) => {
 
 const addWater = async (req, res, next) => {
   const { _id: owner } = req.user;
-  const { amountWater } = req.body;
+  const { amountWater, time } = req.body;
+  
   const date = new Date();
   const existingWaterData = await Water.findOne({
     date: {
@@ -30,7 +31,7 @@ const addWater = async (req, res, next) => {
     const updatedResult = await Water.findOneAndUpdate(
       { owner },
       {
-        $push: { entries: { amountWater } },
+        $push: { entries: { amountWater, time } },
         $inc: { totalAmountWater: amountWater },
       },
       { new: true }
@@ -39,7 +40,7 @@ const addWater = async (req, res, next) => {
     res.status(201).json(updatedResult);
   } else {
     const result = await Water.create({
-      entries: [{ amountWater}],
+      entries: [{ amountWater, time }],
       totalAmountWater: amountWater,
       owner,
     });
