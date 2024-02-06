@@ -106,7 +106,7 @@ const forgotPassword = async (req, res) => {
   const verifyEmail = {
     to: email,
     subject: "Veriry Email",
-    html: `<a target="_blank" href="${URL_AT_SITE}/forgot-password?userId=${user._id}">Click verify email</a>`,
+    html: `<a target="_blank" href="${URL_AT_SITE}/reset-password?userId=${user._id}">Click verify email</a>`,
   };
 
   await sendEmail(verifyEmail);

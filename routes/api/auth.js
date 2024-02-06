@@ -24,7 +24,6 @@ router.post(
 
 router.patch(
   "/reset-password",
-  authenticate,
   validateBody(schemas.resetPassword),
   ctrl.resetPassword
 );
