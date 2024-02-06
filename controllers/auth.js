@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { User } = require("../models/user");
-const { TOKEN_KEY, URL_FORGOT_PASSWORD } = process.env;
+const { TOKEN_KEY } = process.env;
 const { nanoid } = require("nanoid");
 const { ctrlWrapper, HttpError, sendEmail } = require("../helpers");
 
@@ -106,9 +106,9 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  const { password, id } = req.body;
+  const { password, _id } = req.body;
 
-  const user = await findUserById(id);
+  const user = await User.findByIdAndUpdate(_id);
   if (!user) {
     throw HttpError(404);
   }
