@@ -173,6 +173,66 @@
       }
     },
 
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Forgot password",
+        "parameters": [],
+        "requestBody": {
+          "description": "Enter email address",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email sent successfully"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+
+    "/auth/reset-password": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "Reset password",
+        "parameters": [],
+        "requestBody": {
+          "description": "Enter old and new passwords",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+
     "/user/info": {
       "get": {
         "tags": ["User"],
@@ -592,6 +652,11 @@
                 "description": "User's email address",
                 "example": "example@example.com"
               },
+              "name": {
+                "type": "string",
+                "description": "User password",
+                "example": "user"
+              },
               "avatarURL": {
                 "type": "string",
                 "description": "URL or path to user's avatar",
@@ -600,12 +665,7 @@
               "gender": {
                 "type": "string",
                 "description": "User's gender",
-                "example": "male"
-              },
-              "dailyNorma": {
-                "type": "number",
-                "description": "User's daily norma",
-                "example": 2
+                "example": "man"
               }
             }
           }
@@ -657,7 +717,7 @@
               "gender": {
                 "type": "string",
                 "description": "User's gender",
-                "example": "male"
+                "example": "man"
               }
             }
           }
@@ -674,7 +734,7 @@
           "gender": {
             "type": "string",
             "description": "User gender",
-            "example": "male"
+            "example": "man"
           },
           "name": {
             "type": "string",
@@ -696,6 +756,35 @@
             "type": "number",
             "description": "User dailyNorma address",
             "example": 2.4
+          }
+        }
+      },
+    
+      "ForgotPasswordRequest": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email",
+            "example": "user@example.com"
+          }
+        }
+      },
+      "ResendPasswordRequest": {
+        "type": "object",
+        "required": ["password", "id"],
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "User's new password",
+            "example": "123456789"
+          },
+          "id": {
+            "type": "string",
+            "description": "User's id",
+            "example": "65bac4d3ac8b677558915edc"
           }
         }
       },
@@ -722,7 +811,7 @@
           "gender": {
             "type": "string",
             "description": "User's gender",
-            "example": "male"
+            "example": "man"
           },
           "dailyNorma": {
             "type": "number",
@@ -783,11 +872,6 @@
                   "type": "string",
                   "description": "User's gender",
                   "example": "woman"
-                },
-                "dailyNorma": {
-                  "type": "number",
-                  "description": "User's dailyNorma address",
-                  "example": 2
                 }
               }
             }
@@ -839,18 +923,23 @@
 
       "AddWaterRequest": {
         "type": "object",
-        "required": ["amountWater", "day"],
+        "required": ["amountWater", "time"],
         "properties": {
           "amountWater": {
             "type": "number",
             "description": "The amount of water drunk",
             "example": 200
+          },
+          "time": {
+            "type": "string",
+            "description": "The time when the water was drunk",
+            "example": "11:30"
           }
         }
       },
       "AddWaterResponse": {
         "type": "object",
-        "required": ["amountWater", "day", "_id", "time"],
+        "required": ["amountWater", "time", "_id", "time"],
         "properties": {
           "entries": {
             "type": "object",
@@ -860,15 +949,15 @@
                 "description": "the amount of water drunk",
                 "example": 200
               },
+              "time": {
+                "type": "string",
+                "description": "The time when the water was drunk",
+                "example": "11:30"
+              },
               "_id": {
                 "type": "string",
                 "description": "Water id",
                 "example": "65bac4d3ac8b677558915edc"
-              },
-              "time": {
-                "type": "string",
-                "description": "The time when the water was drunk",
-                "example": "2024-02-06T14:05:07.517Z"
               }
             }
           },
@@ -892,6 +981,11 @@
             "type": "number",
             "description": "Amount of water volume",
             "example": 270
+          },
+          "time": {
+            "type": "string",
+            "description": "The time when the water was drunk",
+            "example": "11:30"
           }
         }
       },
@@ -906,20 +1000,15 @@
                 "description": "the amount of water drunk",
                 "example": 270
               },
-              "day": {
-                "type": "number",
-                "description": "day",
-                "example": "5"
+              "time": {
+                "type": "string",
+                "description": "The time when the water was drunk",
+                "example": "11:30"
               },
               "_id": {
                 "type": "string",
                 "description": "Water id",
                 "example": "65bac4d3ac8b677558915edc"
-              },
-              "time": {
-                "type": "string",
-                "description": "The time when the water was drunk",
-                "example": "2024-01-31T22:08:19.638Z"
               }
             }
           },
@@ -927,7 +1016,12 @@
             "type": "number",
             "description": "Total amount of water drunk",
             "example": 270
-          }
+          },
+          "date":{
+            "type": "string",
+                "description": "The date when the water was drunk",
+                "example": "2024-02-06T14:05:07.517Z"
+          } 
         }
       },
       "DeleteWaterRequest": {
@@ -951,20 +1045,15 @@
             "items": {
               "type": "object",
               "properties": {
-                "amountWater": { "type": "integer", "example": 200 },
-                "day": {
-                  "type": "number",
-                  "description": "day",
-                  "example": "5"
-                },
                 "_id": {
                   "type": "string",
                   "example": "65b68e7c7a8fd23d2ed0b0c0"
                 },
+                "amountWater": { "type": "integer", "example": 200 },
                 "time": {
                   "type": "string",
                   "format": "date-time",
-                  "example": "08:35 AM"
+                  "example": "11:30"
                 }
               }
             }
@@ -977,7 +1066,7 @@
         "properties": {
           "date": { "type": "string", "example": "January, 5" },
           "recordsWaterConsumption": { "type": "number", "example": 2 },
-          "dailyNorma": { "type": "number", "example": 2 },
+          "dailyNorma": { "type": "string", "example": "2 L" },
           "percentage": { "type": "integer", "example": 25 }
         }
       }
