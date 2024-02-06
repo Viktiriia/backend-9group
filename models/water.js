@@ -13,10 +13,6 @@ const waterSchema = new Schema(
           type: Date,
           default: Date.now,
         },
-        day: {
-          type: Number,
-          required: true,
-        },
       },
     ],
     totalAmountWater: {
