@@ -812,11 +812,6 @@
             "type": "number",
             "description": "The amount of water drunk",
             "example": 200
-          },
-          "day": {
-            "type": "number",
-            "description": "day",
-            "example": "5"
           }
         }
       },
@@ -831,11 +826,6 @@
                 "type": "number",
                 "description": "the amount of water drunk",
                 "example": 200
-              },
-              "day": {
-                "type": "number",
-                "description": "day",
-                "example": "5"
               },
               "_id": {
                 "type": "string",
@@ -853,7 +843,12 @@
             "type": "number",
             "description": "Total amount of water drunk",
             "example": 200
-          }
+          },
+          "date":{
+            "type": "string",
+                "description": "The date when the water was drunk",
+                "example": "2024-02-06T14:05:07.517Z"
+          } 
         }
       },
       "UpdateWaterRequest": {
