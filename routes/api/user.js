@@ -5,7 +5,6 @@ const ctrl = require("../../controllers/user");
 const { schemas } = require("../../Schemas/userSchemas");
 
 const {
-  isValidId,
   validateBody,
   authenticate,
   upload,
@@ -18,12 +17,11 @@ router.patch(
   ctrl.updateAvatar
 );
 
-router.get("/info", authenticate, isValidId, ctrl.getInfoUser);
+router.get("/info", authenticate, ctrl.getInfoUser);
 
 router.patch(
   "/update",
   authenticate,
-  isValidId,
   validateBody(schemas.addSchema),
   ctrl.getUserUpdateById
 );

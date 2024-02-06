@@ -21,6 +21,7 @@ router.post(
 router.put(
   "/update/:waterId",
   authenticate,
+  isValidId,
   validateBody(schemas.updateWaterSchemas),
   ctrl.updateWater
 );

@@ -20,7 +20,7 @@ const updateAvatar = async (req, res) => {
 };
 
 const getInfoUser = async (req, res) => {
-  const { _id } = req.user;
+   const { _id } = req.user;
   const result = await User.findById(_id);
 
   if (!result) {
@@ -50,9 +50,6 @@ const getUserUpdateById = async (req, res) => {
     { new: true }
   ).populate("_id email password");
 
-  if (!result) {
-    throw new HttpError(404, "Not found");
-  }
 
   if (!result) {
     throw HttpError(404, "Not found");
@@ -67,9 +64,6 @@ const getUserUpdateById = async (req, res) => {
     }
 
     const user = await User.findById(_id);
-    if (!user) {
-      throw HttpError(404);
-    }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
@@ -103,10 +97,6 @@ const getUserUpdateById = async (req, res) => {
 const waterRate = async (req, res) => {
   const { _id } = req.user;
   const { dailyNorma } = req.body;
-
-  if (dailyNorma > 15) {
-    throw HttpError(400, "The daily rate can be a maximum of 15 l");
-  }
 
   const result = await User.findByIdAndUpdate(_id, req.body, { new: true });
 
