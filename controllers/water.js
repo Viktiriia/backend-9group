@@ -50,14 +50,14 @@ const addWater = async (req, res, next) => {
 
 const updateWater = async (req, res) => {
   const { waterId } = req.params;
-  const { amountWater } = req.body;
+  const { amountWater, time } = req.body;
 
   const oldAmountWater = await findExistingEntryAndCalculateOldAmount(waterId);
 
   const result = await Water.findOneAndUpdate(
     { "entries._id": waterId },
     {
-      $set: { "entries.$[elem].amountWater": amountWater },
+      $set: { "entries.$[elem].amountWater": amountWater, time },
       $inc: { totalAmountWater: amountWater - oldAmountWater },
     },
     {

@@ -7,7 +7,7 @@ const entriesWaterSchemas = Joi.object({
 
 const updateWaterSchemas = Joi.object({
   amountWater: Joi.number().min(1).max(15000),
-  day: Joi.number().min(1).max(31),
+  time: Joi.string()
 });
 
 const schemas = {
