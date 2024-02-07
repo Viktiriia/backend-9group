@@ -15,6 +15,10 @@ const waterSchema = new Schema(
         },
       },
     ],
+    dailyNorma: {
+      type: Number,
+      default: 2,
+    },
     totalAmountWater: {
       type: Number,
       default: 0,
